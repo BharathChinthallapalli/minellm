@@ -115,16 +115,16 @@ warnings.filterwarnings("ignore", category=UserWarning)
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
 if missing_deps:
+ 1w6ogj-codex/fix-code-issues
+    def _warn_missing_deps() -> None:
+
     if __name__ == "__main__":
+main
         print(
             "This script requires additional dependencies: "
             + ", ".join(missing_deps)
         )
-        print("Install them with `pip install -r requirements.txt`.")
-    else:
-        raise ImportError(
-            "Missing dependencies: " + ", ".join(missing_deps)
-        )
+
     sys.exit(0)
 
 @dataclass
