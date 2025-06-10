@@ -26,32 +26,91 @@ import re
 import logging
 import time
 import asyncio
+import sys
 
-import numpy as np
-import pandas as pd
-import requests
-import torch
-import torch.nn as nn
-from datasets import Dataset
-from transformers import (
-    AutoModelForCausalLM,
-    AutoTokenizer,
-    TrainingArguments,
-    Trainer,
-    DataCollatorForLanguageModeling,
-    EarlyStoppingCallback,
-)
-from peft import (
-    get_peft_model,
-    PromptTuningConfig,
-    PromptTuningInit,
-    TaskType,
-    PeftModel,
-)
+missing_deps = []
+try:
+    import numpy as np
+except ImportError:  # pragma: no cover - optional dependency
+    np = None
+    missing_deps.append("numpy")
+
+try:
+    import pandas as pd
+except ImportError:  # pragma: no cover - optional dependency
+    pd = None
+    missing_deps.append("pandas")
+
+try:
+    import requests
+except ImportError:  # pragma: no cover - optional dependency
+    requests = None
+    missing_deps.append("requests")
+
+try:
+    import torch
+    import torch.nn as nn
+except ImportError:  # pragma: no cover - optional dependency
+    torch = None
+    nn = None
+    missing_deps.append("torch")
+
+try:
+    from datasets import Dataset
+except ImportError:  # pragma: no cover - optional dependency
+    Dataset = None
+    missing_deps.append("datasets")
+
+try:
+    from transformers import (
+        AutoModelForCausalLM,
+        AutoTokenizer,
+        TrainingArguments,
+        Trainer,
+        DataCollatorForLanguageModeling,
+        EarlyStoppingCallback,
+    )
+except ImportError:  # pragma: no cover - optional dependency
+    AutoModelForCausalLM = None
+    AutoTokenizer = None
+    TrainingArguments = None
+    Trainer = None
+    DataCollatorForLanguageModeling = None
+    EarlyStoppingCallback = None
+    missing_deps.append("transformers")
+
+try:
+    from peft import (
+        get_peft_model,
+        PromptTuningConfig,
+        PromptTuningInit,
+        TaskType,
+        PeftModel,
+    )
+except ImportError:  # pragma: no cover - optional dependency
+    get_peft_model = None
+    PromptTuningConfig = None
+    PromptTuningInit = None
+    TaskType = None
+    PeftModel = None
+    missing_deps.append("peft")
 
 # Suppress warnings for cleaner output
 warnings.filterwarnings("ignore", category=UserWarning)
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+if missing_deps:
+    if __name__ == "__main__":
+        print(
+            "This script requires additional dependencies: "
+            + ", ".join(missing_deps)
+        )
+        print("Install them with `pip install -r requirements.txt`.")
+        sys.exit(0)
+    else:
+        raise ImportError(
+            "Missing dependencies: " + ", ".join(missing_deps)
+        )
 
 # =============================================================================
 # 1. UNIFIED CONFIGURATION SYSTEM
@@ -438,4 +497,11 @@ def main():
         torch.cuda.empty_cache()
 
 if __name__ == "__main__":
-    main()
+    if missing_deps:
+        print(
+            "This script requires additional dependencies: "
+            + ", ".join(missing_deps)
+        )
+        print("Install them with `pip install -r requirements.txt`.")
+    else:
+        main()

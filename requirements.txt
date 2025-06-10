@@ -1,0 +1,8 @@
+numpy
+pandas
+requests
+torch
+datasets
+transformers
+peft
+streamlit
