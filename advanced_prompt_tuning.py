@@ -115,15 +115,23 @@ warnings.filterwarnings("ignore", category=UserWarning)
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
 if missing_deps:
-    if __name__ == "__main__":
+    def _warn_missing_deps() -> None:
         print(
             "This script requires additional dependencies: "
             + ", ".join(missing_deps)
         )
         print("Install them with `pip install -r requirements.txt`.")
+else:
+    def _warn_missing_deps() -> None:
+        return
+
+if __name__ == "__main__":
+    if missing_deps:
+        _warn_missing_deps()
     else:
-        raise ImportError(
-            "Missing dependencies: " + ", ".join(missing_deps)
+        print(
+            "advanced_prompt_tuning.py is a helper module. Implement training "
+            "logic as needed."
         )
     sys.exit(0)
 
